@@ -6,7 +6,6 @@
 
 #define STOPS_COUNT 10
 
-
 struct BusRoute {
     char routeName[50];
     char stops[STOPS_COUNT][50];
@@ -15,13 +14,11 @@ struct BusRoute {
     struct BusRoute* next;
 };
 
-
 struct Admin {
     char username[50];
     char password[50];
     struct Admin* next;
 };
-
 
 struct Parent {
     char username[50];
@@ -29,6 +26,11 @@ struct Parent {
     struct Parent* next;
 };
 
+struct Student {
+    char username[50];
+    char password[50];
+    struct Student* next;
+};
 
 void displayMenu();
 void addRoute(struct BusRoute** head);
@@ -36,10 +38,14 @@ void displayRoutes(struct BusRoute* head);
 void registerAdmin(struct Admin** head);
 bool adminLogin(struct Admin* head, const char* username, const char* password);
 void parentLogin(struct Parent* head);
+void studentLogin(struct Student* head);
 void trackBus();
 void findShortestRoute(struct BusRoute* head);
 void findLongestRoute(struct BusRoute* head);
-
+void registerParent(struct Parent** head);
+void registerStudent(struct Student** head);
+void displayParents(struct Parent* head);
+void displayStudents(struct Student* head);
 
 void insertRoute(struct BusRoute** head, const char* routeName, const char stops[][50], int numStops, double distance) {
     struct BusRoute* newNode = (struct BusRoute*)malloc(sizeof(struct BusRoute));
@@ -66,25 +72,20 @@ void insertRoute(struct BusRoute** head, const char* routeName, const char stops
     }
 }
 
-
 void displayRoutes(struct BusRoute* head) {
     struct BusRoute* current = head;
 
-   
     printf("+------------------------------------------------------+-----------------+\n");
     printf("|                      Route Name                      |    Distance     |\n");
     printf("+------------------------------------------------------+-----------------+\n");
 
-    
     while (current != NULL) {
         printf("| %-50s |   %-12.2lf |\n", current->routeName, current->distance);
         current = current->next;
     }
 
-   
     printf("+------------------------------------------------------+-----------------+\n");
 }
-
 
 void addRoute(struct BusRoute** head) {
     char routeName[50];
@@ -110,7 +111,6 @@ void addRoute(struct BusRoute** head) {
     insertRoute(head, routeName, stops, numStops, distance);
     printf("Route added successfully!\n");
 }
-
 
 void registerAdmin(struct Admin** head) {
     char username[50];
@@ -144,6 +144,70 @@ void registerAdmin(struct Admin** head) {
     printf("Admin registered successfully!\n");
 }
 
+void registerParent(struct Parent** head) {
+    char username[50];
+    char password[50];
+    printf("                        REGISTRATION  OF  PARENT : \n");
+    printf("Enter parent username: ");
+    scanf("%s", username);
+
+    printf("Enter parent password: ");
+    scanf("%s", password);
+
+    struct Parent* newNode = (struct Parent*)malloc(sizeof(struct Parent));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+    strcpy(newNode->username, username);
+    strcpy(newNode->password, password);
+    newNode->next = NULL;
+
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct Parent* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+
+    printf("Parent registered successfully!\n");
+}
+
+void registerStudent(struct Student** head) {
+    char username[50];
+    char password[50];
+    printf("                        REGISTRATION  OF  STUDENT : \n");
+    printf("Enter student username: ");
+    scanf("%s", username);
+
+    printf("Enter student password: ");
+    scanf("%s", password);
+
+    struct Student* newNode = (struct Student*)malloc(sizeof(struct Student));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+    strcpy(newNode->username, username);
+    strcpy(newNode->password, password);
+    newNode->next = NULL;
+
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct Student* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+
+    printf("Student registered successfully!\n");
+}
+
 
 bool adminLogin(struct Admin* head, const char* username, const char* password) {
     struct Admin* current = head;
@@ -156,23 +220,21 @@ bool adminLogin(struct Admin* head, const char* username, const char* password) 
     return false; 
 }
 
-
 void parentLogin(struct Parent* head) {
-    
     printf("Parent login functionality is not implemented yet.\n");
 }
 
+void studentLogin(struct Student* head) {
+    printf("Student login functionality is not implemented yet.\n");
+}
 
 void trackBus() {
-   
     srand(time(NULL)); 
     double latitude = (rand() % 180) - 90 + (double)rand() / RAND_MAX;
     double longitude = (rand() % 360) - 180 + (double)rand() / RAND_MAX;
 
     printf("Bus Location - Latitude: %lf, Longitude: %lf\n", latitude, longitude);
 }
-
-
 
 void findShortestRoute(struct BusRoute* head) {
     printf("Finding the shortest route path...\n");
@@ -186,7 +248,6 @@ void findShortestRoute(struct BusRoute* head) {
     struct BusRoute* shortestRoute = NULL;
     double minDistance = __DBL_MAX__;
 
-  
     while (current != NULL) {
         if (current->distance < minDistance) {
             minDistance = current->distance;
@@ -201,10 +262,6 @@ void findShortestRoute(struct BusRoute* head) {
         printf("No routes found.\n");
     }
 }
-   
-
-
-
 
 void findLongestRoute(struct BusRoute* head) {
     printf("Finding the longest route path...\n");
@@ -218,7 +275,6 @@ void findLongestRoute(struct BusRoute* head) {
     struct BusRoute* longestRoute = NULL;
     double maxDistance = -1;
 
-    // Find the longest route
     while (current != NULL) {
         if (current->distance > maxDistance) {
             maxDistance = current->distance;
@@ -234,7 +290,29 @@ void findLongestRoute(struct BusRoute* head) {
     }
 }
 
- 
+
+
+void displayBoxedParents(struct Parent* head) {
+    printf("+---------------------------------------------+\n");
+    printf("|                  Parents                    |\n");
+    printf("+---------------------------------------------+\n");
+    while (head != NULL) {
+        printf("| %-40s |\n", head->username);
+        head = head->next;
+    }
+    printf("+---------------------------------------------+\n");
+}
+
+void displayBoxedStudents(struct Student* head) {
+    printf("+---------------------------------------------+\n");
+    printf("|                  Students                   |\n");
+    printf("+---------------------------------------------+\n");
+    while (head != NULL) {
+        printf("| %-40s |\n", head->username);
+        head = head->next;
+    }
+    printf("+---------------------------------------------+\n");
+}
 
 
 void displayMenu() {
@@ -244,20 +322,24 @@ void displayMenu() {
     printf("3. Track Bus\n");
     printf("4. Find Shortest Route Path\n");
     printf("5. Find Longest Route Path\n");
-    printf("6. Log out and Register Admin\n");
-    printf("7. Exit\n");
+    printf("6. Register Parent\n");
+    printf("7. Register Student\n");
+    printf("8. Display Parents\n");
+    printf("9. Display Students\n");
+    printf("10. Log out and Register Admin\n");
+    printf("11. Exit\n");
 }
 
 int main() {
     struct BusRoute* head = NULL;
     struct Admin* adminHead = NULL;
+    struct Parent* parentHead = NULL;
+    struct Student* studentHead = NULL;
 
-  
     registerAdmin(&adminHead);
 
     int choice;
     do {
-        
         char username[50], password[50];
         printf("                        LOGIN  OF  ADMIN : \n");
         printf("Enter admin username: ");
@@ -287,24 +369,34 @@ int main() {
                         findLongestRoute(head);
                         break;
                     case 6:
+                        registerParent(&parentHead);
+                        break;
+                    case 7:
+                        registerStudent(&studentHead);
+                        break;
+                    case 8:
+                      displayBoxedParents(parentHead);
+                        break;
+                    case 9:
+                           displayBoxedStudents(studentHead);
+                        break;
+                    case 10:
                         printf("Logging out and moving to registration of admin.\n");
-                        // Resetting adminHead to NULL
                         adminHead = NULL;
                         registerAdmin(&adminHead);
                         break;
-                    case 7:
+                    case 11:
                         printf("Exiting admin panel.\n");
                         break;
                     default:
                         printf("Invalid choice. Please try again.\n");
                 }
-            } while (choice != 7);
+            } while (choice != 11);
         } else {
             printf("Invalid admin credentials.\n");
         }
     } while (1);
 
-  
     struct BusRoute* current = head;
     while (current != NULL) {
         struct BusRoute* temp = current;
@@ -312,11 +404,24 @@ int main() {
         free(temp);
     }
 
-  
     struct Admin* adminCurrent = adminHead;
     while (adminCurrent != NULL) {
         struct Admin* temp = adminCurrent;
         adminCurrent = adminCurrent->next;
+        free(temp);
+    }
+
+    struct Parent* parentCurrent = parentHead;
+    while (parentCurrent != NULL) {
+        struct Parent* temp = parentCurrent;
+        parentCurrent = parentCurrent->next;
+        free(temp);
+    }
+
+    struct Student* studentCurrent = studentHead;
+    while (studentCurrent != NULL) {
+        struct Student* temp = studentCurrent;
+        studentCurrent = studentCurrent->next;
         free(temp);
     }
 
